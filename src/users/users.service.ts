@@ -39,6 +39,7 @@ export class UsersService {
       if (rolesArray.length === 0) {
         throw new NotFoundException(`No users with role ${role} found`);
       }
+      return rolesArray;
     }
     return this.users;
   }
@@ -62,10 +63,7 @@ export class UsersService {
     return newUser;
   }
 
-  update(
-    id: number,
-    updateUserDto: UpdateUserDto,
-  ) {
+  update(id: number, updateUserDto: UpdateUserDto) {
     this.users = this.users.map((user) => {
       if (user.id === id) {
         return {
