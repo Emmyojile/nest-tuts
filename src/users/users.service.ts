@@ -2,85 +2,90 @@ import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { User } from './models/user.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class UsersService {
-  private users = [
-    { name: 'John Doe', id: 1, email: 'john.doe@example.com', role: 'ADMIN' },
-    {
-      name: 'Jane Smith',
-      id: 2,
-      email: 'jane.smith@example.com',
-      role: 'INTERN',
-    },
-    {
-      name: 'Mike Jones',
-      id: 3,
-      email: 'mike.jones@example.com',
-      role: 'INTERN',
-    },
-    {
-      name: 'Alice Brown',
-      id: 4,
-      email: 'alice.brown@example.com',
-      role: 'ADMIN',
-    },
-    {
-      name: 'David Johnson',
-      id: 5,
-      email: 'david.johnson@example.com',
-      role: 'ENGINEER',
-    },
-  ];
-  findAll(role?: 'INTERN' | 'ADMIN' | 'ENGINEER') {
+  constructor (@InjectRepository(User) private readonly userRepository: Repository<User>) {}
+
+  findAll(role?: 'INTERN' | 'ADMIN' | 'ENGINEER'): Promise<User[]> {
     if (role) {
-      const rolesArray = this.users.filter((user) => user.role === role);
-
-      if (rolesArray.length === 0) {
-        throw new NotFoundException(`No users with role ${role} found`);
-      }
-      return rolesArray;
+      return this.userRepository.find({ where: { role } }); // Use repository methods
     }
-    return this.users;
+    return this.userRepository.find(); // Find all users
   }
 
-  findOne(id: number) {
-    const user = this.users.find((user) => user.id === id);
+  // findOne(id: number) {
+  //   const user = this.users.find((user) => user.id === id);
 
-    if (!user) {
-      throw new NotFoundException(`User with ID ${id} not found`);
-    }
-    return user;
+  //   if (!user) {
+  //     throw new NotFoundException(`User with ID ${id} not found`);
+  //   }
+  //   return user;
+  // }
+
+  async create(createUserDto: CreateUserDto): Promise<User> {
+    const newUser = new User();
+    newUser.name = createUserDto.name;
+    newUser.email = createUserDto.email;
+    newUser.role = createUserDto.role;
+  
+    // Alternatively, use object spread syntax for assignment
+    // const newUser = { ...createUserDto }; 
+  
+    const savedUser = await this.userRepository.save(newUser);
+    return savedUser;
   }
 
-  create(createUserDto: CreateUserDto) {
-    const usersByHighestId = [...this.users].sort((a, b) => b.id - a.id);
-    const newUser = {
-      id: usersByHighestId[0].id + 1,
-      ...createUserDto,
-    };
-    this.users.push(newUser);
-    return newUser;
-  }
+  // update(id: number, updateUserDto: UpdateUserDto) {
+  //   this.users = this.users.map((user) => {
+  //     if (user.id === id) {
+  //       return {
+  //         ...user,
+  //         ...updateUserDto,
+  //       };
+  //     }
+  //     return user;
+  //   });
+  //   return this.findOne(id);
+  // }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    this.users = this.users.map((user) => {
-      if (user.id === id) {
-        return {
-          ...user,
-          ...updateUserDto,
-        };
-      }
-      return user;
-    });
-    return this.findOne(id);
-  }
+  // delete(id: number) {
+  //   const removedUser = this.findOne(id);
 
-  delete(id: number) {
-    const removedUser = this.findOne(id);
+  //   this.users = this.users.filter((user) => user.id !== id);
 
-    this.users = this.users.filter((user) => user.id !== id);
-
-    return removedUser;
-  }
+  //   return removedUser;
+  // }
 }
+
+
+  // private users = [
+  //   { name: 'John Doe', id: 1, email: 'john.doe@example.com', role: 'ADMIN' },
+  //   {
+  //     name: 'Jane Smith',
+  //     id: 2,
+  //     email: 'jane.smith@example.com',
+  //     role: 'INTERN',
+  //   },
+  //   {
+  //     name: 'Mike Jones',
+  //     id: 3,
+  //     email: 'mike.jones@example.com',
+  //     role: 'INTERN',
+  //   },
+  //   {
+  //     name: 'Alice Brown',
+  //     id: 4,
+  //     email: 'alice.brown@example.com',
+  //     role: 'ADMIN',
+  //   },
+  //   {
+  //     name: 'David Johnson',
+  //     id: 5,
+  //     email: 'david.johnson@example.com',
+  //     role: 'ENGINEER',
+  //   },
+  // ];
