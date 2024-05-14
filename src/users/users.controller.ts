@@ -23,10 +23,10 @@ export class UsersController {
     return this.usersService.findAll(role);
   }
 
-  // @Get(':id')
-  // findOne(@Param('id', ParseIntPipe) id: number) {
-  //   return this.usersService.findOne(id);
-  // }
+  @Get(':id')
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.usersService.findOne(id);
+  }
 
   @Post() //POST /users
   create(@Body(ValidationPipe) createUserDto: CreateUserDto) {

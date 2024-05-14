@@ -17,14 +17,10 @@ export class UsersService {
     return this.userRepository.find(); // Find all users
   }
 
-  // findOne(id: number) {
-  //   const user = this.users.find((user) => user.id === id);
+  async findOne(id: number): Promise<User> {
+    return await this.userRepository.findOne({ where : { id } });
+  }
 
-  //   if (!user) {
-  //     throw new NotFoundException(`User with ID ${id} not found`);
-  //   }
-  //   return user;
-  // }
 
   async create(createUserDto: CreateUserDto): Promise<User> {
     const newUser = new User();
