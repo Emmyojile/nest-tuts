@@ -35,18 +35,10 @@ export class UsersService {
     return savedUser;
   }
 
-  // update(id: number, updateUserDto: UpdateUserDto) {
-  //   this.users = this.users.map((user) => {
-  //     if (user.id === id) {
-  //       return {
-  //         ...user,
-  //         ...updateUserDto,
-  //       };
-  //     }
-  //     return user;
-  //   });
-  //   return this.findOne(id);
-  // }
+  async update(id: number, user: User): Promise<User> {
+    await this.userRepository.update(id, user);
+    return await this.userRepository.findOne( { where : { id } } );
+  }
 
   // delete(id: number) {
   //   const removedUser = this.findOne(id);

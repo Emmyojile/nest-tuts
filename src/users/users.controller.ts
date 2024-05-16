@@ -33,13 +33,13 @@ export class UsersController {
     return this.usersService.create(createUserDto);
   }
 
-  // @Patch(':id')
-  // update(
-  //   @Param('id', ParseIntPipe) id: number,
-  //   @Body(ValidationPipe) updateUserDto: UpdateUserDto,
-  // ) {
-  //   return this.usersService.update(id, updateUserDto);
-  // }
+  @Patch(':id')
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body(ValidationPipe) updateUserDto: any,
+  ) {
+    return this.usersService.update(id, updateUserDto);
+  }
 
   // @Delete(':id')
   // delete(@Param('id', ParseIntPipe) id: number) {

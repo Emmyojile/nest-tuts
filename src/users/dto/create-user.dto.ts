@@ -12,4 +12,5 @@ export class CreateUserDto {
         message: "A valid role is required"
     })
     role: "INTERN" | "ADMIN" | "ENGINEER"
+
 }
